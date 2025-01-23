@@ -5,6 +5,7 @@ from functions.general import (
     search_movies_based_genres,
     display_movie_metadata,
 )
+from functions.content_filtering_methods import plot_embedding_similarity_genre
 from functions.helper_functions.streamlit_setup import page_config
 import pandas as pd
 import os
@@ -37,7 +38,7 @@ fh.setFormatter(formatter)
 logger.addHandler(fh)
 
 # Title
-st.title("Movie Recommendations Using Basic Cypher Queries/Graph Traversal")
+st.title("Movie Recommendations Content-Based Filtering (Plot Embeddings)")
 
 # Subheader
 st.subheader("Select your favorite movies to get recommendations!")
@@ -176,4 +177,84 @@ if selected_genres:
         # st.session_state.generate_recs_button = st.button("Generate Recommendations")
         generate_recs_button = st.button("Generate Recommendations")
         if generate_recs_button:
-            st.write("Recommendations will be displayed here")
+            # st.write("Recommendations will be displayed here")
+            # get list of ids for each movie
+            movie_ids = []
+            for movie in selected_movies:
+                movie_id = all_movies[all_movies["Movie.title"] == movie][
+                    "MovieID"
+                ].values[0]
+                movie_ids.append(movie_id)
+                # print(movie_id)
+
+            movie_recs = {}
+
+            for movie_id in movie_ids:
+                # get the recommendations for each movie
+                movie_recs[movie_id] = plot_embedding_similarity_genre(movie_id)
+
+            # movie_recs is a dictionary of dictionaries, each dictionary contains 'source_id', 'source', 'target_id', 'target', 'similarity'
+            # we want to show the target movie and the node's properties, plus the similarity score
+            # do not need to show the source_id and source properties
+            movie_recs_df = pd.DataFrame()
+            for key, value in movie_recs.items():
+                movie_rec_df = pd.json_normalize(value)
+                # st.write(movie_rec_df)
+                # # drop all columns containing the word source
+                # movie_rec_df = movie_rec_df[
+                #     movie_rec_df.columns.drop(list(movie_rec_df.filter(regex="source")))
+                # ]
+                movie_recs_df = pd.concat(
+                    [movie_recs_df, movie_rec_df], axis=0, ignore_index=True
+                )
+            movie_recs_df = movie_recs_df.sort_values(
+                by=["similarity"], ascending=False
+            )
+            movie_recs_df = movie_recs_df.drop(columns=["target_id"])
+            st.success("Recommendations based on selected movies")
+
+            # get the unique source_id and titles
+            source_id_title_unique = movie_recs_df[
+                ["source_id", "source.title"]
+            ].drop_duplicates()
+            # save to a dict
+            source_id_title_dict = dict(
+                zip(
+                    source_id_title_unique["source_id"],
+                    source_id_title_unique["source.title"],
+                )
+            )
+
+            # for each source_id, find all rows that have the same source_id and display the recommendations in the descending order of the similarity score
+            for source_id, group in movie_recs_df.groupby("source_id"):
+                # display the title of the source movie in bold header
+                st.header(f"Recommendations for {source_id_title_dict[source_id]}")
+                # drop all columns containing the word source
+                group = group[group.columns.drop(list(group.filter(regex="source")))]
+                # display the title, movie poster, and plot of the movie first, then display the rest of the metadata in a dataframe
+                for index, row in group.iterrows():
+                    # st.write(row)
+                    st.write(row["target.title"])
+                    st.markdown(
+                        f"![{row['target.title']}](https://image.tmdb.org/t/p/w500{row['target.poster']})"
+                    )
+                    st.write(f"Plot: {row['target.plot']}")
+                    # for each row, remove the plotembedding, posterembedding, tmdbId, movieid, plot, and poster
+                    row = row.drop(
+                        [
+                            "target.plot",
+                            "target.poster",
+                            "target.plotEmbedding",
+                            "target.posterEmbedding",
+                            "target.tmdbId",
+                            "target.movieId",
+                        ]
+                    )
+                    # display the row in one row, with the column names as the column headers
+                    st.dataframe(
+                        row.to_frame().T, use_container_width=True, hide_index=True
+                    )
+
+else:
+    st.warning("Please select at least one genre to filter movies")
+    st.stop()

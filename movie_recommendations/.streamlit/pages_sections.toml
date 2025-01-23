@@ -1,0 +1,24 @@
+[[pages]]
+path = "app.py"
+name = "Home"
+icon = "🏠"
+
+[[pages]]
+name = "Content-based Methods"
+is_section = true
+icon="📚"
+
+[[pages]]
+path = "pages/10_Content_Filtering_Based_Recommendations.py"
+name = "Plot Embeddings"
+icon = ":pencil2:"
+
+[[pages]]
+name = "Collaborative Filtering Methods"
+is_section = true
+icon="🤝"
+
+[[pages]]
+path = "pages/20_Collaborative_Filtering_Based_Recommendations.py"
+name = "Bipartite Graph"
+icon = "📊"

@@ -2,7 +2,6 @@ from functions.connections import NEO4J_DRIVER
 from functions.helper_functions.cypher import run_cypher
 import os
 from dotenv import load_dotenv
-import neo4j
 
 print(load_dotenv(".env"))
 
