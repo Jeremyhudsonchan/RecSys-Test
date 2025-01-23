@@ -1,15 +1,15 @@
 [[pages]]
-path = "app.py"
+path = "ui/home.py"
 name = "Home"
-icon = "🏠"
+icon = ":house:"
 
 [[pages]]
-name = "Content-based Methods"
+name = "Content Filtering Methods"
 is_section = true
 icon="📚"
 
 [[pages]]
-path = "pages/10_Content_Filtering_Based_Recommendations.py"
+path = "ui/plot_embeddings_method.py"
 name = "Plot Embeddings"
 icon = ":pencil2:"
 
@@ -19,6 +19,16 @@ is_section = true
 icon="🤝"
 
 [[pages]]
-path = "pages/20_Collaborative_Filtering_Based_Recommendations.py"
+path = "ui/bipartite_graph_method.py"
 name = "Bipartite Graph"
 icon = "📊"
+
+[[pages]]
+name = "Content & Collaborative combined Methods"
+is_section = true
+icon="📚"
+
+[[pages]]
+name = "Bipartite Graph + Plot Embeddings"
+path = "ui/plot_embeddings_bipartite_combined.py"
+icon = ":brain:"

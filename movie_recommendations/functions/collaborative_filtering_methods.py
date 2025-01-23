@@ -43,11 +43,12 @@ def movie_user_recommendations_singular(id, rating):
     WITH m
     MATCH (m)<-[r:RATED]-(u:User)
     WHERE r.rating = $rating
-    WITH u
+    WITH DISTINCT u
     MATCH (u)-[r:RATED]->(rec:Movie)
     WHERE r.rating = 5.0
-    WITH rec, u
-    RETURN DISTINCT elementID(rec) as rec_id, rec as recommendation, elementId(u) as user_id, u as user ORDER BY rec.imdbVotes DESC LIMIT 20
+    WITH DISTINCT rec, COUNT(u) AS user_count
+    RETURN elementID(rec) as rec_id, rec as recommendation, user_count
+    ORDER BY rec.imdbVotes DESC LIMIT 5
     """
-    result = run_cypher(query, {"id": id, "rating": rating})
+    result = run_cypher(NEO4J_DRIVER, query, {"id": id, "rating": rating})
     return result
