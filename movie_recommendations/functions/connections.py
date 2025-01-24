@@ -44,7 +44,7 @@ def connect_to_neo4j():
 
         AUTH = (user, password)
 
-        logger.info(f"Connecting to Neo4j at {uri} with user {user}")
+        logger.info(f"Connecting to Neo4j at {URI} with user {user}")
 
         with neo4j.GraphDatabase.driver(URI, auth=AUTH) as driver:
             driver.verify_connectivity()
