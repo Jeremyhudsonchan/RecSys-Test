@@ -1,5 +1,6 @@
 import streamlit as st
 from functions.helper_functions.streamlit_setup import page_config
+from functions.initialize import start
 import os
 import logging
 
@@ -29,6 +30,8 @@ fh.setLevel(logging.DEBUG)
 fh.setFormatter(formatter)
 
 logger.addHandler(fh)
+
+start()
 
 # Title
 st.title("Movie Recommendations")

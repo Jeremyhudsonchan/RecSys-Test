@@ -32,13 +32,25 @@ logger.addHandler(fh)
 # Connect to Neo4j
 def connect_to_neo4j():
     try:
-        uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-        user = os.getenv("NEO4J_USER", "neo4j")
-        password = os.getenv("NEO4J_PASSWORD", "password")
+        # local
+        # uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+        # user = os.getenv("NEO4J_USER", "neo4j")
+        # password = os.getenv("NEO4J_PASSWORD", "password")
+
+        # deployed
+        uri = os.getenv("NEO4j_URI_DPLY", "bolt://localhost:7687")
+        user = os.getenv("NEO4J_USER_DPLY", "neo4j")
+        password = os.getenv("NEO4J_PASSWORD_DPLY", "abcd1234")
+
+        URI = "neo4j+s://f1f706ab.databases.neo4j.io"
+        AUTH = (user, password)
 
         logger.info(f"Connecting to Neo4j at {uri} with user {user}")
 
-        driver = neo4j.GraphDatabase.driver(uri, auth=(user, password))
+        with neo4j.GraphDatabase.driver(URI, auth=AUTH) as driver:
+            driver.verify_connectivity()
+
+        # driver = neo4j.GraphDatabase.driver(uri, auth=(user, password))
         return driver
     except Exception as e:
         logger.error(f"Failed to connect to Neo4j: {e}")
