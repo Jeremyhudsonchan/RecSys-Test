@@ -38,11 +38,10 @@ def connect_to_neo4j():
         # password = os.getenv("NEO4J_PASSWORD", "password")
 
         # deployed
-        uri = os.getenv("NEO4j_URI_DPLY", "bolt://localhost:7687")
+        URI = os.getenv("NEO4j_URI_DPLY", "bolt://localhost:7687")
         user = os.getenv("NEO4J_USER_DPLY", "neo4j")
         password = os.getenv("NEO4J_PASSWORD_DPLY", "abcd1234")
 
-        URI = "neo4j+s://f1f706ab.databases.neo4j.io"
         AUTH = (user, password)
 
         logger.info(f"Connecting to Neo4j at {uri} with user {user}")
