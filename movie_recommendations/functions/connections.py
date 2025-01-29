@@ -33,21 +33,21 @@ logger.addHandler(fh)
 def connect_to_neo4j():
     try:
         # local
-        # uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-        # user = os.getenv("NEO4J_USER", "neo4j")
-        # password = os.getenv("NEO4J_PASSWORD", "password")
+        URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+        user = os.getenv("NEO4J_USER", "neo4j")
+        password = os.getenv("NEO4J_PASSWORD", "password")
 
-        # deployed
-        URI = os.getenv("NEO4j_URI_DPLY", "bolt://localhost:7687")
-        user = os.getenv("NEO4J_USER_DPLY", "neo4j")
-        password = os.getenv("NEO4J_PASSWORD_DPLY", "abcd1234")
+        # # deployed
+        # URI = os.getenv("NEO4j_URI_DPLY", "bolt://localhost:7687")
+        # user = os.getenv("NEO4J_USER_DPLY", "neo4j")
+        # password = os.getenv("NEO4J_PASSWORD_DPLY", "abcd1234")
 
         AUTH = (user, password)
 
         logger.info(f"Connecting to Neo4j at {URI} with user {user}")
 
-        with neo4j.GraphDatabase.driver(URI, auth=AUTH) as driver:
-            driver.verify_connectivity()
+        driver = neo4j.GraphDatabase.driver(URI, auth=AUTH)
+        driver.verify_connectivity()
 
         # driver = neo4j.GraphDatabase.driver(uri, auth=(user, password))
         return driver

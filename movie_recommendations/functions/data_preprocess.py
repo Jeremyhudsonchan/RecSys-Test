@@ -126,6 +126,16 @@ def drop_missing():
         WHERE m.posterEmbedding IS NULL OR size(m.posterEmbedding) <> 512
         DETACH DELETE m
         """,
+        "year_drop": """
+        MATCH (m:Movie)
+        WHERE m.year IS NULL
+        DETACH DELETE m
+        """,
+        "imdbRating_drop": """
+        MATCH (m:Movie)
+        WHERE m.imdbRating IS NULL
+        DETACH DELETE m
+        """,
     }
 
     try:

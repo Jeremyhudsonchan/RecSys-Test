@@ -50,7 +50,7 @@ def list_all_movies():
     """
     query = """
     MATCH (m:Movie)
-    RETURN apoc.map.removeKeys(m, ["plotEmbedding", "posterEmbedding", "tmdbId", "movieId", "countries", "budget", "revenue"]) as Movie, elementID(m) as MovieID
+    RETURN apoc.map.removeKeys(m, ["plotEmbedding", "posterEmbedding", "tmdbId", "movieId", "countries", "budget", "revenue"]) as Movie, elementID(m) as MovieID, ID(m) as MovieNeo4jID
     ORDER BY m.title, m.released
     """
     parameters = {}
@@ -66,12 +66,13 @@ def search_movies_based_genres(genres):
     query = """
     MATCH (m:Movie)-[:IN_GENRE]->(g:Genre)
     WHERE g.name IN $genres
-    RETURN apoc.map.removeKeys(m, ["plotEmbedding", "posterEmbedding", "tmdbId", "movieId", "countries", "budget", "revenue"]) as Movie, elementID(m) as MovieID, g.name as Genre, elementID(g) as GenreID
+    RETURN apoc.map.removeKeys(m, ["plotEmbedding", "posterEmbedding", "tmdbId", "movieId", "countries", "budget", "revenue"]) as Movie, elementID(m) as MovieID, ID(m) as MovieNeo4jID, g.name as Genre, elementID(g) as GenreID, ID(g) as GenreNeo4jID
     ORDER BY m.title, m.released
     """
     parameters = {"genres": genres}
     data = run_cypher(NEO4J_DRIVER, query, parameters)
-    logger.debug(f"Results from the query based on genres: {data}")
+    logger.info("Search Movies based on Genres Completed")
+    # logger.debug(f"Results from the query based on genres: {data}")
     return data
 
 
@@ -80,9 +81,10 @@ def display_movie_metadata(movie_id):
     query = """
     MATCH (m:Movie)-[IN_GENRE]->(g:Genre)
     WHERE elementID(m) = $movie_id
-    RETURN apoc.map.removeKeys(m, ["plotEmbedding", "posterEmbedding", "tmdbId", "movieId", "countries", "budget", "revenue"]) as Movie, elementID(m) as MovieID, g.name as Genre, elementID(g) as GenreID
+    RETURN apoc.map.removeKeys(m, ["plotEmbedding", "posterEmbedding", "tmdbId", "movieId", "countries", "budget", "revenue"]) as Movie, elementID(m) as MovieID, ID(m) as MovieNeo4jID, g.name as Genre, elementID(g) as GenreID, ID(g) as GenreNeo4jID
     """
     parameters = {"movie_id": movie_id}
     data = run_cypher(NEO4J_DRIVER, query, parameters)
-    logger.debug(f"Results from the query of movie metadata: {data}")
+    logger.info("Displaying Movie Metadata Completed")
+    # logger.debug(f"Results from the query of movie metadata: {data}")
     return data
